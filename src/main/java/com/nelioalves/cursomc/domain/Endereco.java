@@ -28,6 +28,8 @@ public class Endereco implements Serializable {
     @JoinColumn(name = "client_id")
     private Cliente cliente;
 
+    private Pedido pedido;
+
     public Endereco()  {
     }
 
