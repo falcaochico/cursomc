@@ -1,9 +1,6 @@
 package com.nelioalves.cursomc.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.hibernate.engine.internal.Cascade;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -26,12 +23,10 @@ public class Pedido implements Serializable {
     @JoinColumn(name = "endereco_entrega_id")
     private Endereco enderecoDeEntrega;
 
-    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    @JsonManagedReference
     @OneToOne(cascade=CascadeType.ALL, mappedBy = "pedido")
     private Pagamento pagamento;
 
