@@ -3,6 +3,7 @@ package com.nelioalves.cursomc.services;
 import com.nelioalves.cursomc.domain.ItemPedido;
 import com.nelioalves.cursomc.domain.PagamentoComBoleto;
 import com.nelioalves.cursomc.domain.Pedido;
+import com.nelioalves.cursomc.domain.Produto;
 import com.nelioalves.cursomc.domain.enums.EstadoPagamento;
 import com.nelioalves.cursomc.repositories.ItemPedidoRepository;
 import com.nelioalves.cursomc.repositories.PagamentoRepository;
@@ -21,6 +22,7 @@ public class PedidoService {
     @Autowired private PagamentoRepository pagamentoRepository;
     @Autowired private ProdutoService produtoService;
     @Autowired private ItemPedidoRepository itemPedidoRepository;
+    @Autowired private ClienteService clienteService;
 
     public Pedido find(Integer id){
         return repo.findById(id).orElseThrow(()->
@@ -33,6 +35,7 @@ public class PedidoService {
         obj.setId(null);
         obj.setInstante(new Date());
         obj.getPagamento().setEstado(EstadoPagamento.PENDENTE);
+        obj.setCliente(clienteService.find(obj.getCliente().getId()));
         obj.getPagamento().setPedido(obj);
         if(obj.getPagamento() instanceof PagamentoComBoleto){
             PagamentoComBoleto pagto = (PagamentoComBoleto) obj.getPagamento();
@@ -43,10 +46,13 @@ public class PedidoService {
         pagamentoRepository.save(obj.getPagamento());
         for(ItemPedido ip :obj.getItens()){
             ip.setDesconto(0.00);
-            ip.setPreco(produtoService.find(ip.getProduto().getId()).getPreco());
+            Produto p = produtoService.find(ip.getProduto().getId());
+            ip.setPreco(p.getPreco());
+            ip.setProduto(p);
             ip.setPedido(obj);
         }
         itemPedidoRepository.saveAll(obj.getItens());
+        System.out.println(obj);
         return obj;
     }
 }
