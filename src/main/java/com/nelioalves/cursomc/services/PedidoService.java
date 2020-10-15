@@ -23,6 +23,7 @@ public class PedidoService {
     @Autowired private ProdutoService produtoService;
     @Autowired private ItemPedidoRepository itemPedidoRepository;
     @Autowired private ClienteService clienteService;
+    @Autowired private EmailService emailService;
 
     public Pedido find(Integer id){
         return repo.findById(id).orElseThrow(()->
@@ -52,7 +53,7 @@ public class PedidoService {
             ip.setPedido(obj);
         }
         itemPedidoRepository.saveAll(obj.getItens());
-        System.out.println(obj);
+        emailService.sendOrderConfirmationEmail(obj);
         return obj;
     }
 }
